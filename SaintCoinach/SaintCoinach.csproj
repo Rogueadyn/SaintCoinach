@@ -78,6 +78,7 @@
     <Compile Include="EorzeaDateTime.cs" />
     <Compile Include="EorzeaDateTime.Formatter.cs" />
     <Compile Include="Ex\DataSheet.Enumerator.cs" />
+    <Compile Include="Ex\ExReference.cs" />
     <Compile Include="Ex\MultiSheet.Enumerator.cs" />
     <Compile Include="Ex\PartialDataSheet.Enumerator.cs" />
     <Compile Include="Ex\Relational\Update\UpdateProgress.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Imaging\GraphicsFileTextureDefinition.cs" />
     <Compile Include="Imaging\IconHelper.cs" />
     <Compile Include="IO\EmptyFile.cs" />
+    <Compile Include="IO\PackReference.cs" />
     <Compile Include="IO\IIndexFile.cs" />
     <Compile Include="IO\Index2.cs" />
     <Compile Include="IO\Index2File.cs" />

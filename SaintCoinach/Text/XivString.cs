@@ -11,7 +11,7 @@ namespace SaintCoinach.Text {
         public static readonly XivString Empty = new XivString(new INode[0]);
 
         private readonly INode[] _Children;
-        private WeakReference<string> _StringCache;
+        private string _String;
 
         TagType INode.Tag { get { return TagType.None; } }
         NodeFlags INode.Flags { get { return NodeFlags.HasChildren | NodeFlags.IsExpression; } }
@@ -32,17 +32,12 @@ namespace SaintCoinach.Text {
         }
 
         public override string ToString() {
-            string v;
-            if (_StringCache != null && _StringCache.TryGetTarget(out v))
-                return v;
-            var sb = new StringBuilder();
-            ToString(sb);
-            v = sb.ToString();
-            if (_StringCache == null)
-                _StringCache = new WeakReference<string>(v);
-            else
-                _StringCache.SetTarget(v);
-            return v;
+            if (_String == null) {
+                var sb = new StringBuilder();
+                ToString(sb);
+                _String = sb.ToString();
+            }
+            return _String;
         }
         public void ToString(StringBuilder builder) {
             foreach (var part in Children)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace SaintCoinach.Ex.Relational {
     public class RelationalDataRow : DataRow, IRelationalDataRow {
         #region Fields
-        private Dictionary<string, WeakReference<object>> _ValueReferences = new Dictionary<string, WeakReference<object>>();
+        private Dictionary<string, ExReference<object>> _ValueReferences = new Dictionary<string, ExReference<object>>();
         #endregion
 
         #region Constructors
@@ -35,20 +35,21 @@ namespace SaintCoinach.Ex.Relational {
 
         public object this[string columnName] {
             get {
-                WeakReference<object> valRef;
+                ExReference<object> valRef;
                 object val;
-                if (_ValueReferences.TryGetValue(columnName, out valRef)) {
-                    if (valRef.TryGetTarget(out val))
-                        return val;
-                    _ValueReferences.Remove(columnName);
-                }
+                var hasRef = _ValueReferences.TryGetValue(columnName, out valRef);
+                if (hasRef && valRef.TryGetTarget(out val))
+                    return val;
 
                 var col = Sheet.Header.FindColumn(columnName);
                 if (col == null)
                     throw new KeyNotFoundException();
                 val = this[col.Index];
 
-                _ValueReferences.Add(columnName, new WeakReference<object>(val));
+                if (hasRef)
+                    valRef.SetTarget(val);
+                else
+                    _ValueReferences.Add(columnName, new ExReference<object>(Sheet.Collection, val));
                 return val;
             }
         }

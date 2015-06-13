@@ -8,7 +8,7 @@ namespace SaintCoinach.IO {
     public class FileDefault : File {
         #region Fields
 
-        private WeakReference<byte[]> _BufferCache;
+        private PackReference<byte[]> _BufferCache;
 
         #endregion
 
@@ -23,12 +23,13 @@ namespace SaintCoinach.IO {
         public override byte[] GetData() {
             byte[] buffer;
 
-            if (_BufferCache != null && _BufferCache.TryGetTarget(out buffer)) return buffer;
+            if (_BufferCache != null && _BufferCache.TryGetTarget(out buffer))
+                return buffer;
 
             buffer = Read();
 
             if (_BufferCache == null)
-                _BufferCache = new WeakReference<byte[]>(buffer);
+                _BufferCache = new PackReference<byte[]>(Pack, buffer);
             else
                 _BufferCache.SetTarget(buffer);
 

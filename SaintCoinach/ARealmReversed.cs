@@ -440,8 +440,8 @@ namespace SaintCoinach {
 
             var exdPackId = new PackIdentifier("exd", PackIdentifier.DefaultExpansion, 0);
             var exdPack = Packs.GetPack(exdPackId);
-            var exdOldKeepInMemory = exdPack.KeepInMemory;
-            exdPack.KeepInMemory = true;
+            var exdOldKeepInMemory = exdPack.Optimize;
+            exdPack.Optimize = true;
 
             string tempPath = null;
             UpdateReport report;
@@ -449,7 +449,7 @@ namespace SaintCoinach {
                 using (var zip = new ZipFile(StateFile.FullName, ZipEncoding)) {
                     tempPath = ExtractPacks(zip, previousVersion);
                     var previousPack = new PackCollection(Path.Combine(tempPath, previousVersion));
-                    previousPack.GetPack(exdPackId).KeepInMemory = true;
+                    previousPack.GetPack(exdPackId).Optimize = true;
                     var previousDefinition = ReadDefinition(zip);
 
                     var updater = new RelationUpdater(previousPack, previousDefinition, Packs, GameVersion, progress);
@@ -470,7 +470,7 @@ namespace SaintCoinach {
                 }
             } finally {
                 if (exdPack != null)
-                    exdPack.KeepInMemory = exdOldKeepInMemory;
+                    exdPack.Optimize = exdOldKeepInMemory;
                 if (tempPath != null) {
                     try {
                         Directory.Delete(tempPath, true);

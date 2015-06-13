@@ -24,7 +24,7 @@ namespace SaintCoinach.IO {
         private readonly Dictionary<Tuple<Thread, byte>, WeakReference<Stream>> _DataStreams =
             new Dictionary<Tuple<Thread, byte>, WeakReference<Stream>>();
 
-        private bool _KeepInMemory = false;
+        private bool _Optimize = false;
         private Dictionary<int, byte[]> _Buffers = new Dictionary<int,byte[]>();
 
         #endregion
@@ -35,10 +35,10 @@ namespace SaintCoinach.IO {
         public PackCollection Collection { get; private set; }
         public DirectoryInfo DataDirectory { get; private set; }
         public IPackSource Source { get; private set; }
-        public bool KeepInMemory {
-            get { return _KeepInMemory; }
+        public bool Optimize {
+            get { return _Optimize; }
             set {
-                if (value == _KeepInMemory)
+                if (value == _Optimize)
                     return;
 
                 Stream t;
@@ -46,7 +46,7 @@ namespace SaintCoinach.IO {
                     throw new InvalidOperationException();
                 _DataStreams.Clear();
 
-                _KeepInMemory = value;
+                _Optimize = value;
                 if (!value)
                     _Buffers.Clear();
             }
@@ -62,8 +62,9 @@ namespace SaintCoinach.IO {
             var key = Tuple.Create(thread, datFile);
             WeakReference<Stream> streamRef;
             Stream stream;
+            bool hasRef;
             lock (_DataStreams)
-                _DataStreams.TryGetValue(key, out streamRef);
+                hasRef = _DataStreams.TryGetValue(key, out streamRef);
 
             if (streamRef == null || !streamRef.TryGetTarget(out stream))
                 stream = null;
@@ -74,7 +75,7 @@ namespace SaintCoinach.IO {
             var fullPath = Path.Combine(DataDirectory.FullName, Id.Expansion, baseName);
 
 
-            if (KeepInMemory) {
+            if (Optimize) {
                 if (!_Buffers.ContainsKey(datFile)) {
                     _Buffers.Add(datFile, IOFile.ReadAllBytes(fullPath));
                 }
@@ -83,8 +84,8 @@ namespace SaintCoinach.IO {
                 stream = IOFile.OpenRead(fullPath);
 
             lock (_DataStreams) {
-                if (_DataStreams.ContainsKey(key))
-                    _DataStreams[key].SetTarget(stream);
+                if (hasRef)
+                    streamRef.SetTarget(stream);
                 else
                     _DataStreams.Add(key, new WeakReference<Stream>(stream));
             }

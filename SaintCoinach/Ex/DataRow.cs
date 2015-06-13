@@ -5,8 +5,8 @@ namespace SaintCoinach.Ex {
     public class DataRow : IDataRow {
         #region Fields
 
-        private readonly Dictionary<int, WeakReference<object>> _ValueReferences =
-            new Dictionary<int, WeakReference<object>>();
+        private readonly Dictionary<int, ExReference<object>> _ValueReferences =
+            new Dictionary<int, ExReference<object>>();
 
         #endregion
 
@@ -36,17 +36,18 @@ namespace SaintCoinach.Ex {
         public object this[int columnIndex] {
             get {
                 object value;
-
-                if (_ValueReferences.ContainsKey(columnIndex) && _ValueReferences[columnIndex].TryGetTarget(out value))
+                ExReference<object> valRef;
+                var hasRef = _ValueReferences.TryGetValue(columnIndex, out valRef);
+                if (hasRef && valRef.TryGetTarget(out value))
                     return value;
 
                 var column = Sheet.Header.GetColumn(columnIndex);
                 value = column.Read(Sheet.GetBuffer(), this);
 
-                if (_ValueReferences.ContainsKey(columnIndex))
-                    _ValueReferences[columnIndex].SetTarget(value);
+                if (hasRef)
+                    valRef.SetTarget(value);
                 else
-                    _ValueReferences.Add(columnIndex, new WeakReference<object>(value));
+                    _ValueReferences.Add(columnIndex, new ExReference<object>(Sheet.Collection, value));
 
                 return value;
             }

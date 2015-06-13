@@ -14,10 +14,12 @@ namespace SaintCoinach.Ex {
 
         private readonly Dictionary<int, string> _SheetIdentifiers = new Dictionary<int, string>();
 
-        private readonly Dictionary<string, WeakReference<ISheet>> _Sheets =
-            new Dictionary<string, WeakReference<ISheet>>();
+        private readonly Dictionary<string, ExReference<ISheet>> _Sheets =
+            new Dictionary<string, ExReference<ISheet>>();
 
         private List<string> _AvailableSheets;
+
+        private bool _Optimize;
 
         #endregion
 
@@ -27,20 +29,20 @@ namespace SaintCoinach.Ex {
         public Language ActiveLanguage { get; set; }
         public string ActiveLanguageCode { get { return ActiveLanguage.GetCode(); } }
         public IEnumerable<string> AvailableSheets { get { return _AvailableSheets; } }
+        public bool Optimize {
+            get { return _Optimize; }
+            set { _Optimize = value; }
+        }
 
         #endregion
 
         #region Constructors
-
-        #region Constructor
 
         public ExCollection(PackCollection packCollection) {
             PackCollection = packCollection;
 
             BuildIndex();
         }
-
-        #endregion
 
         #endregion
 
@@ -85,7 +87,6 @@ namespace SaintCoinach.Ex {
         }
 
         public bool SheetExists(string name) {
-            //name = FixName(name);
             return AvailableSheets.Contains(name);
         }
 
@@ -105,13 +106,14 @@ namespace SaintCoinach.Ex {
         public ISheet GetSheet(string name) {
             const string ExHPathFormat = "exd/{0}.exh";
 
-            //name = FixName(name);
             if (!AvailableSheets.Contains(name))
                 throw new KeyNotFoundException();
 
             ISheet sheet;
-            WeakReference<ISheet> sheetRef;
-            if (_Sheets.TryGetValue(name, out sheetRef) && sheetRef.TryGetTarget(out sheet)) return sheet;
+            ExReference<ISheet> sheetRef;
+            var hasRef = _Sheets.TryGetValue(name, out sheetRef);
+            if (hasRef && sheetRef.TryGetTarget(out sheet))
+                return sheet;
 
             var exhPath = string.Format(ExHPathFormat, name);
             var exh = PackCollection.GetFile(exhPath);
@@ -119,10 +121,10 @@ namespace SaintCoinach.Ex {
             var header = CreateHeader(name, exh);
             sheet = CreateSheet(header);
 
-            if (_Sheets.ContainsKey(name))
-                _Sheets[name].SetTarget(sheet);
+            if (hasRef)
+                sheetRef.SetTarget(sheet);
             else
-                _Sheets.Add(name, new WeakReference<ISheet>(sheet));
+                _Sheets.Add(name, new ExReference<ISheet>(this, sheet));
             return sheet;
         }
 

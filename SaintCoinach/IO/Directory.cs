@@ -9,7 +9,7 @@ namespace SaintCoinach.IO {
         #region Fields
 
         private readonly Dictionary<string, uint> _FileNameMap = new Dictionary<string, uint>();
-        private readonly Dictionary<uint, WeakReference<File>> _Files = new Dictionary<uint, WeakReference<File>>();
+        private readonly Dictionary<uint, PackReference<File>> _Files = new Dictionary<uint, PackReference<File>>();
         private string _Path;
 
         #endregion
@@ -46,10 +46,12 @@ namespace SaintCoinach.IO {
         #region Get
 
         public bool FileExists(string name) {
-            uint hash;/*
-            if (!_FileNameMap.TryGetValue(name, out hash))
-                _FileNameMap.Add(name, hash = Hash.Compute(name));*/
-            hash = Hash.Compute(name);
+            uint hash;
+            if (Pack.Optimize) {
+                if (!_FileNameMap.TryGetValue(name, out hash))
+                    _FileNameMap.Add(name, hash = Hash.Compute(name));
+            } else
+                hash = Hash.Compute(name);
             return FileExists(hash);
         }
 
@@ -58,10 +60,12 @@ namespace SaintCoinach.IO {
         }
 
         public File GetFile(string name) {
-            uint hash;/*
-            if (!_FileNameMap.TryGetValue(name, out hash))
-                _FileNameMap.Add(name, hash = Hash.Compute(name));*/
-            hash = Hash.Compute(name);
+            uint hash;
+            if (Pack.Optimize) {
+                if (!_FileNameMap.TryGetValue(name, out hash))
+                    _FileNameMap.Add(name, hash = Hash.Compute(name));
+            } else
+                hash = Hash.Compute(name);
 
             var file = GetFile(hash);
             file.Path = string.Format("{0}/{1}", this.Path, name);
@@ -69,25 +73,28 @@ namespace SaintCoinach.IO {
         }
 
         public File GetFile(uint key) {
-            WeakReference<File> fileRef;
+            PackReference<File> fileRef;
             File file;
-            if (_Files.TryGetValue(key, out fileRef) && fileRef.TryGetTarget(out file))
+            var hasRef = _Files.TryGetValue(key, out fileRef);
+            if (hasRef && fileRef.TryGetTarget(out file))
                 return file;
 
             var index = Index.Files[key];
             file = FileFactory.Get(this.Pack, index);
-            if (_Files.ContainsKey(key))
-                _Files[key].SetTarget(file);
+            if (hasRef)
+                fileRef.SetTarget(file);
             else
-                _Files.Add(key, new WeakReference<File>(file));
+                _Files.Add(key, new PackReference<File>(Pack, file));
             return file;
         }
 
         public bool TryGetFile(string name, out File file) {
-            uint hash;/*
-            if (!_FileNameMap.TryGetValue(name, out hash))
-                _FileNameMap.Add(name, hash = Hash.Compute(name));*/
-            hash = Hash.Compute(name);
+            uint hash;
+            if (Pack.Optimize) {
+                if (!_FileNameMap.TryGetValue(name, out hash))
+                    _FileNameMap.Add(name, hash = Hash.Compute(name));
+            } else
+                hash = Hash.Compute(name);
 
             var result = TryGetFile(hash, out file);
             if (result)
@@ -96,17 +103,18 @@ namespace SaintCoinach.IO {
         }
 
         public bool TryGetFile(uint key, out File file) {
-            WeakReference<File> fileRef;
-            if (_Files.TryGetValue(key, out fileRef) && fileRef.TryGetTarget(out file))
+            PackReference<File> fileRef;
+            var hasRef = _Files.TryGetValue(key, out fileRef);
+            if (hasRef && fileRef.TryGetTarget(out file))
                 return true;
 
             IndexFile index;
             if (Index.Files.TryGetValue(key, out index)) {
                 file = FileFactory.Get(this.Pack, index);
-                if (_Files.ContainsKey(key))
-                    _Files[key].SetTarget(file);
+                if (hasRef)
+                    fileRef.SetTarget(file);
                 else
-                    _Files.Add(key, new WeakReference<File>(file));
+                    _Files.Add(key, new PackReference<File>(Pack, file));
                 return true;
             }
 
