@@ -24,7 +24,7 @@ namespace SaintCoinach.IO {
         private readonly Dictionary<Tuple<Thread, byte>, WeakReference<Stream>> _DataStreams =
             new Dictionary<Tuple<Thread, byte>, WeakReference<Stream>>();
 
-        private bool _Optimize = false;
+        internal bool _Optimize = false;
         private Dictionary<int, byte[]> _Buffers = new Dictionary<int,byte[]>();
 
         #endregion
@@ -75,11 +75,12 @@ namespace SaintCoinach.IO {
             var fullPath = Path.Combine(DataDirectory.FullName, Id.Expansion, baseName);
 
 
-            if (Optimize) {
-                if (!_Buffers.ContainsKey(datFile)) {
-                    _Buffers.Add(datFile, IOFile.ReadAllBytes(fullPath));
-                }
-                stream = new MemoryStream(_Buffers[datFile], false);
+            if (_Optimize) {
+                byte[] buffer;
+                if (!_Buffers.TryGetValue(datFile, out buffer))
+                    _Buffers.Add(datFile, buffer = IOFile.ReadAllBytes(fullPath));
+
+                stream = new MemoryStream(buffer, false);
             } else
                 stream = IOFile.OpenRead(fullPath);
 

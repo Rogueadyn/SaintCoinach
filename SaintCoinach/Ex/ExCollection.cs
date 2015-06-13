@@ -19,7 +19,7 @@ namespace SaintCoinach.Ex {
 
         private List<string> _AvailableSheets;
 
-        private bool _Optimize;
+        internal bool _Optimize;
 
         #endregion
 

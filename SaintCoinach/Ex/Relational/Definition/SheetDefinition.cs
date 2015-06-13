@@ -84,8 +84,9 @@ namespace SaintCoinach.Ex.Relational.Definition {
 
         public int? FindColumn(string columnName) {
             if (_IsCompiled) {
-                if (_ColumnNameToIndexMap.ContainsKey(columnName))
-                    return _ColumnNameToIndexMap[columnName];
+                int index;
+                if (_ColumnNameToIndexMap.TryGetValue(columnName, out index))
+                    return index;
                 return null;
             }
 
@@ -114,24 +115,33 @@ namespace SaintCoinach.Ex.Relational.Definition {
         }
 
         public string GetColumnName(int index) {
-            if (_IsCompiled)
-                return _ColumnIndexToNameMap.ContainsKey(index) ? _ColumnIndexToNameMap[index] : null;
+            if (_IsCompiled) {
+                string name;
+                _ColumnIndexToNameMap.TryGetValue(index, out name);
+                return name;
+            }
 
             PositionedDataDefintion def;
             return TryGetDefinition(index, out def) ? def.GetName(index) : null;
         }
 
         public string GetValueTypeName(int index) {
-            if (_IsCompiled)
-                return _ColumnValueTypeNames.ContainsKey(index) ? _ColumnValueTypeNames[index] : null;
+            if (_IsCompiled) {
+                string name;
+                _ColumnValueTypeNames.TryGetValue(index, out name);
+                return name;
+            }
 
             PositionedDataDefintion def;
             return TryGetDefinition(index, out def) ? def.GetValueTypeName(index) : null;
         }
 
         public Type GetValueType(int index) {
-            if (_IsCompiled)
-                return _ColumnValueTypes.ContainsKey(index) ? _ColumnValueTypes[index] : null;
+            if (_IsCompiled) {
+                Type type;
+                _ColumnValueTypes.TryGetValue(index, out type);
+                return type;
+            }
 
             PositionedDataDefintion def;
             return TryGetDefinition(index, out def) ? def.GetValueType(index) : null;

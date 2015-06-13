@@ -53,9 +53,10 @@ namespace SaintCoinach.Ex.Relational.Update {
                 if (matches <= 0) continue;
 
                 var c = matches / (double)DataDefinition.Length;
-                if (!_IndexMatchConfidence.ContainsKey(updatedI))
-                    _IndexMatchConfidence.Add(updatedI, new List<double>());
-                _IndexMatchConfidence[updatedI].Add(c);
+                List<double> cl;
+                if (!_IndexMatchConfidence.TryGetValue(updatedI, out cl))
+                    _IndexMatchConfidence.Add(updatedI, cl = new List<double>());
+                cl.Add(c);
             }
 
             ++_RowMatchCount;

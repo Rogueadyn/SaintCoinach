@@ -16,14 +16,14 @@ namespace SaintCoinach.IO {
         public PackReference(Pack pack, T file) {
             _WeakRef = new WeakReference<T>(file);
             _Pack = pack;
-            if (pack.Optimize)
+            if (pack._Optimize)
                 _StrongRef = file;
         }
         #endregion
 
         #region TryGet
         public bool TryGetTarget(out T target) {
-            var useStrong = _Pack.Optimize;
+            var useStrong = _Pack._Optimize;
 
             if (_StrongRef != null) {
                 target = _StrongRef;
@@ -40,7 +40,7 @@ namespace SaintCoinach.IO {
         }
         public void SetTarget(T target) {
             _WeakRef.SetTarget(target);
-            if (_Pack.Optimize)
+            if (_Pack._Optimize)
                 _StrongRef = target;
             else
                 _StrongRef = null;

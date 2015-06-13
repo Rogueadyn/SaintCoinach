@@ -47,7 +47,7 @@ namespace SaintCoinach.IO {
 
         public bool FileExists(string name) {
             uint hash;
-            if (Pack.Optimize) {
+            if (Pack._Optimize) {
                 if (!_FileNameMap.TryGetValue(name, out hash))
                     _FileNameMap.Add(name, hash = Hash.Compute(name));
             } else
@@ -61,7 +61,7 @@ namespace SaintCoinach.IO {
 
         public File GetFile(string name) {
             uint hash;
-            if (Pack.Optimize) {
+            if (Pack._Optimize) {
                 if (!_FileNameMap.TryGetValue(name, out hash))
                     _FileNameMap.Add(name, hash = Hash.Compute(name));
             } else
@@ -90,7 +90,7 @@ namespace SaintCoinach.IO {
 
         public bool TryGetFile(string name, out File file) {
             uint hash;
-            if (Pack.Optimize) {
+            if (Pack._Optimize) {
                 if (!_FileNameMap.TryGetValue(name, out hash))
                     _FileNameMap.Add(name, hash = Hash.Compute(name));
             } else

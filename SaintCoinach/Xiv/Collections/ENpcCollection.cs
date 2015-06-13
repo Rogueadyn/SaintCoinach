@@ -50,10 +50,11 @@ namespace SaintCoinach.Xiv.Collections {
             get { return Get(key); }
         }
         public ENpc Get(int key) {
-            if (_Inner.ContainsKey(key))
-                return _Inner[key];
+            ENpc enpc;
+            if (_Inner.TryGetValue(key, out enpc))
+                return enpc;
 
-            var enpc = new ENpc(this, key);
+            enpc = new ENpc(this, key);
             _Inner.Add(key, enpc);
             return enpc;
         }
@@ -122,8 +123,10 @@ namespace SaintCoinach.Xiv.Collections {
         public IEnumerable<ENpc> FindWithData(int value) {
             if (_ENpcDataMap == null)
                 _ENpcDataMap = BuildDataMap();
-            if (_ENpcDataMap.ContainsKey(value))
-                return _ENpcDataMap[value];
+
+            List<ENpc> npcs;
+            if (_ENpcDataMap.TryGetValue(value, out npcs))
+                return npcs;
             return new ENpc[0];
         }
 

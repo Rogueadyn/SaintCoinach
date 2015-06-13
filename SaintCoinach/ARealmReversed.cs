@@ -440,7 +440,7 @@ namespace SaintCoinach {
 
             var exdPackId = new PackIdentifier("exd", PackIdentifier.DefaultExpansion, 0);
             var exdPack = Packs.GetPack(exdPackId);
-            var exdOldKeepInMemory = exdPack.Optimize;
+            var exdOldOptimize = exdPack.Optimize;
             exdPack.Optimize = true;
 
             string tempPath = null;
@@ -470,7 +470,7 @@ namespace SaintCoinach {
                 }
             } finally {
                 if (exdPack != null)
-                    exdPack.Optimize = exdOldKeepInMemory;
+                    exdPack.Optimize = exdOldOptimize;
                 if (tempPath != null) {
                     try {
                         Directory.Delete(tempPath, true);
@@ -478,6 +478,7 @@ namespace SaintCoinach {
                         Console.Error.WriteLine("Failed to delete temporary directory {0}.", tempPath);
                     }
                 }
+                GC.Collect();
             }
             return report;
         }

@@ -87,14 +87,14 @@ namespace SaintCoinach.Ex {
         }
 
         protected ISheet<T> GetPartialSheet(int row) {
-            if (_RowToPartialSheetMap.ContainsKey(row))
-                return _RowToPartialSheetMap[row];
+            ISheet<T> partial;
+            if (_RowToPartialSheetMap.TryGetValue(row, out partial))
+                return partial;
 
             var res = Header.DataFileRanges.Where(_ => _.Contains(row)).ToArray();
             if (!res.Any())
                 throw new ArgumentOutOfRangeException();
 
-            ISheet<T> partial;
             var range = res.First();
             if (!_PartialSheets.TryGetValue(range, out partial)) {
                 partial = CreatePartialSheet(range);

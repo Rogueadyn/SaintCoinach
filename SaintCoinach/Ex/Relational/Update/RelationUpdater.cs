@@ -38,9 +38,11 @@ namespace SaintCoinach.Ex.Relational.Update {
             _Progress = progress ?? new NullProgress();
 
             _Previous = new RelationalExCollection(previousPacks);
+            _Previous.Optimize = true;
             Previous = previousDefinition;
 
             _Updated = new RelationalExCollection(updatedPacks);
+            _Updated.Optimize = true;
             Updated = new RelationDefinition {
                 Version = updatedVersion
             };

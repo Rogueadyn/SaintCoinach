@@ -13,17 +13,17 @@ namespace SaintCoinach.Ex {
         #endregion
 
         #region Constructor
-        public ExReference(ExCollection pack, T file) {
+        public ExReference(ExCollection collection, T file) {
             _WeakRef = new WeakReference<T>(file);
-            _Collection = pack;
-            if (pack.Optimize)
+            _Collection = collection;
+            if (collection._Optimize)
                 _StrongRef = file;
         }
         #endregion
 
         #region TryGet
         public bool TryGetTarget(out T target) {
-            var useStrong = _Collection.Optimize;
+            var useStrong = _Collection._Optimize;
 
             if (_StrongRef != null) {
                 target = _StrongRef;
@@ -40,7 +40,7 @@ namespace SaintCoinach.Ex {
         }
         public void SetTarget(T target) {
             _WeakRef.SetTarget(target);
-            if (_Collection.Optimize)
+            if (_Collection._Optimize)
                 _StrongRef = target;
             else
                 _StrongRef = null;
