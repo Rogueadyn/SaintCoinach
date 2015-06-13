@@ -11,12 +11,24 @@ namespace SaintCoinach.Text {
         public static readonly XivString Empty = new XivString(new INode[0]);
 
         private readonly INode[] _Children;
+        private bool? _IsStatic;
         private string _String;
 
         TagType INode.Tag { get { return TagType.None; } }
         NodeFlags INode.Flags { get { return NodeFlags.HasChildren | NodeFlags.IsExpression; } }
         public IEnumerable<INode> Children { get { return _Children; } }
+        public int ChildrenCount { get { return _Children.Length; } }
 
+        public bool IsStatic {
+            get {
+                if (_Children.Length == 0)
+                    return true;
+                if (!_IsStatic.HasValue)
+                    _IsStatic = _Children.All(node => node.Flags.HasFlag(NodeFlags.IsStatic));
+
+                return _IsStatic.Value;
+            }
+        }
         public bool IsEmpty {
             get {
                 if (_Children.Length == 0)
