@@ -35,9 +35,9 @@ namespace SaintCoinach.Text.Nodes {
 
         #region IExpressionNode Members
 
-        public IExpression Evaluate(EvaluationParameters parameters) {
-            var evalIndex = ParameterIndex.TryEvaluate(parameters);
-            var index = parameters.FunctionProvider.ToInteger(evalIndex);
+        public IExpression Evaluate(IEvaluationFunctionProvider provider, EvaluationParameters parameters) {
+            var evalIndex = ParameterIndex.TryEvaluate(provider, parameters);
+            var index = provider.ToInteger(evalIndex);
             return new Expressions.GenericExpression(parameters[this.ParameterType, index]);
         }
 

@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace SaintCoinach.Text.Nodes {
     public interface IExpressionNode : INode {
-        IExpression Evaluate(EvaluationParameters parameters);
+        IExpression Evaluate(IEvaluationFunctionProvider provider, EvaluationParameters parameters);
     }
 }

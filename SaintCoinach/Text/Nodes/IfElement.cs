@@ -55,11 +55,11 @@ namespace SaintCoinach.Text.Nodes {
 
         #region IExpressionNode Members
 
-        public IExpression Evaluate(EvaluationParameters parameters) {
-            var evalCond = Condition.TryEvaluate(parameters);
-            if (parameters.FunctionProvider.ToBoolean(evalCond))
-                return TrueValue.TryEvaluate(parameters);
-            return FalseValue.TryEvaluate(parameters);
+        public IExpression Evaluate(IEvaluationFunctionProvider provider, EvaluationParameters parameters) {
+            var evalCond = Condition.TryEvaluate(provider, parameters);
+            if (provider.ToBoolean(evalCond))
+                return TrueValue.TryEvaluate(provider, parameters);
+            return FalseValue.TryEvaluate(provider, parameters);
         }
 
         #endregion

@@ -43,7 +43,7 @@ namespace SaintCoinach.Text {
             SetEvaluator(TagType.SheetEn, EvaluateSheetWithAttributive);
             SetEvaluator(TagType.SheetFr, EvaluateSheetWithAttributive);
             SetEvaluator(TagType.SheetJa, EvaluateSheetWithAttributive);
-            SetEvaluator(TagType.Value, (p, e) => e.Content.TryEvaluate(p));
+            SetEvaluator(TagType.Value, (p, e) => e.Content.TryEvaluate(this, p));
             SetEvaluator(TagType.TwoDigitValue, EvaluateTwoDigitValue);
             SetEvaluator(TagType.ZeroPaddedValue, EvaluateZeroPaddedValue);
         }
@@ -70,27 +70,27 @@ namespace SaintCoinach.Text {
             var hasArgs = element.Arguments.Any();
             items.Add(new GenericExpression(StringTokens.TagOpen + element.Tag.ToString()));
             if (hasArgs)
-                items.Add(new SurroundedExpression(StringTokens.ArgumentsOpen, new ExpressionCollection(element.Arguments.Select(_ => _.TryEvaluate(parameters))) { Separator = StringTokens.ArgumentsSeperator }, StringTokens.ArgumentsClose));
+                items.Add(new SurroundedExpression(StringTokens.ArgumentsOpen, new ExpressionCollection(element.Arguments.Select(_ => _.TryEvaluate(this, parameters))) { Separator = StringTokens.ArgumentsSeperator }, StringTokens.ArgumentsClose));
 
             if (element.Content == null) {
                 items.Add(new GenericExpression(StringTokens.ElementClose + StringTokens.TagClose));
             } else {
                 items.Add(new GenericExpression(StringTokens.TagClose));
-                items.Add(element.Content.TryEvaluate(parameters));
+                items.Add(element.Content.TryEvaluate(this, parameters));
                 items.Add(new GenericExpression(StringTokens.TagOpen + StringTokens.ElementClose + element.Tag.ToString() + StringTokens.TagClose));
             }
 
             return new ExpressionCollection(items);
         }
         protected virtual IExpression EvaluateTwoDigitValue(EvaluationParameters parameters, Nodes.GenericElement element) {
-            var eval = element.Content.TryEvaluate(parameters);
+            var eval = element.Content.TryEvaluate(this, parameters);
             var intVal = ToInteger(eval);
             return new GenericExpression(intVal.ToString("D2"));
         }
         protected virtual IExpression EvaluateZeroPaddedValue(EvaluationParameters parameters, Nodes.GenericElement element) {
-            var lenEval = element.Arguments.First().TryEvaluate(parameters);
+            var lenEval = element.Arguments.First().TryEvaluate(this, parameters);
             var len = ToInteger(lenEval);
-            var eval = element.Content.TryEvaluate(parameters);
+            var eval = element.Content.TryEvaluate(this, parameters);
             var intVal = ToInteger(eval);
 
             return new GenericExpression(intVal.ToString("D" + len.ToString()));
@@ -105,7 +105,7 @@ namespace SaintCoinach.Text {
              * - 217 / D9h  Minute
              */
 
-            var argEval = element.Arguments.First().TryEvaluate(parameters);
+            var argEval = element.Arguments.First().TryEvaluate(this, parameters);
             var argInt = ToInteger(argEval);
 
             var utcTime = EorzeaDateTime.Zero.AddSeconds(argInt);
@@ -122,7 +122,7 @@ namespace SaintCoinach.Text {
         }
 
         protected virtual IExpression EvaluateSheet(EvaluationParameters parameters, Nodes.GenericElement element) {
-            var evalArgs = element.Arguments.Select(_ => _.TryEvaluate(parameters)).ToArray();
+            var evalArgs = element.Arguments.Select(_ => _.TryEvaluate(this, parameters)).ToArray();
             if (evalArgs.Length < 2)
                 throw new InvalidOperationException();
             var sheetName = evalArgs[0].ToString();
@@ -140,7 +140,7 @@ namespace SaintCoinach.Text {
                     innerParams.InputParameters[i - 2] = evalArgs[i];
 
 
-                value = EvaluationHelper.TryEvaluate((INode)value, innerParams);
+                value = EvaluationHelper.TryEvaluate((INode)value, this, innerParams);
             }
 
             return new GenericExpression(new ObjectWithDisplay(value, row));
@@ -160,7 +160,7 @@ namespace SaintCoinach.Text {
             { TagType.SheetFr, Ex.Language.French },
         };
         protected virtual IExpression EvaluateSheetWithAttributive(EvaluationParameters parameters, Nodes.GenericElement element) {
-            var evalArgs = element.Arguments.Select(_ => _.TryEvaluate(parameters)).ToArray();
+            var evalArgs = element.Arguments.Select(_ => _.TryEvaluate(this, parameters)).ToArray();
             if (evalArgs.Length < 3)
                 throw new InvalidOperationException();
 
@@ -198,9 +198,9 @@ namespace SaintCoinach.Text {
                 innerParams.InputParameters[i - 2] = evalArgs[i];
 
             if (value is INode)
-                value = EvaluationHelper.TryEvaluate((INode)value, innerParams);
+                value = EvaluationHelper.TryEvaluate((INode)value, this, innerParams);
             if (attributiveValue is INode)
-                attributiveValue = EvaluationHelper.TryEvaluate((INode)attributiveValue, innerParams);
+                attributiveValue = EvaluationHelper.TryEvaluate((INode)attributiveValue, this, innerParams);
 
             return new SurroundedExpression(new ObjectWithDisplay(attributiveValue, attributiveRow), new ObjectWithDisplay(value, row), null);
         }
@@ -209,8 +209,8 @@ namespace SaintCoinach.Text {
 
         #region Compare
         public bool Compare(EvaluationParameters parameters, DecodeExpressionType comparisonType, INode left, INode right) {
-            var evalLeft = left.TryEvaluate(parameters);
-            var evalRight = right.TryEvaluate(parameters);
+            var evalLeft = left.TryEvaluate(this, parameters);
+            var evalRight = right.TryEvaluate(this, parameters);
 
             switch (comparisonType) {
                 case DecodeExpressionType.GreaterThanOrEqualTo: {

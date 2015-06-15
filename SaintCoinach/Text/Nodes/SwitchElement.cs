@@ -63,14 +63,14 @@ namespace SaintCoinach.Text.Nodes {
 
         #region IExpressionNode Members
 
-        public IExpression Evaluate(EvaluationParameters parameters) {
-            var evalSwitch = CaseSwitch.TryEvaluate(parameters);
-            var asInt = parameters.FunctionProvider.ToInteger(evalSwitch);
+        public IExpression Evaluate(IEvaluationFunctionProvider provider, EvaluationParameters parameters) {
+            var evalSwitch = CaseSwitch.TryEvaluate(provider, parameters);
+            var asInt = provider.ToInteger(evalSwitch);
 
             INode caseNode;
             if (!_Cases.TryGetValue(asInt, out caseNode))
                 throw new InvalidOperationException();
-            return caseNode.TryEvaluate(parameters);
+            return caseNode.TryEvaluate(provider, parameters);
         }
 
         #endregion

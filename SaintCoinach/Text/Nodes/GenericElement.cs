@@ -67,8 +67,8 @@ namespace SaintCoinach.Text.Nodes {
 
         #region IExpressionNode Members
 
-        public IExpression Evaluate(EvaluationParameters parameters) {
-            return parameters.FunctionProvider.EvaluateGenericElement(parameters, this);
+        public IExpression Evaluate(IEvaluationFunctionProvider provider, EvaluationParameters parameters) {
+            return provider.EvaluateGenericElement(parameters, this);
         }
 
         #endregion

@@ -15,7 +15,6 @@ namespace SaintCoinach.Text {
 
         #region Properties
         public object FallbackValue { get { return _FallbackValue; } set { _FallbackValue = value; } }
-        public IEvaluationFunctionProvider FunctionProvider { get { return _FunctionProvider; } }
         public Parameters.ParameterBase TopLevelParameters { get { return _TopLevelParameters; } }
         public Parameters.ParameterBase InputParameters { get { return _Parameters[DecodeExpressionType.IntegerParameter]; } }
         public Parameters.PlayerParameters PlayerParameters { get { return (Parameters.PlayerParameters)_Parameters[DecodeExpressionType.PlayerParameter]; } }
@@ -24,10 +23,7 @@ namespace SaintCoinach.Text {
         #endregion
 
         #region Constructor
-        public EvaluationParameters(IEvaluationFunctionProvider functionProvider) {
-            if (functionProvider == null)
-                throw new ArgumentNullException("functionProvider");
-            _FunctionProvider = functionProvider;
+        public EvaluationParameters() {
             _Parameters.Add(DecodeExpressionType.IntegerParameter, new Parameters.ParameterBase() { FallbackValue = 0 });
             _Parameters.Add(DecodeExpressionType.PlayerParameter, new Parameters.PlayerParameters());
             _Parameters.Add(DecodeExpressionType.StringParameter, new Parameters.ParameterBase() { FallbackValue = string.Empty });
@@ -36,7 +32,6 @@ namespace SaintCoinach.Text {
         public EvaluationParameters(EvaluationParameters copyFrom) {
             if (copyFrom == null)
                 throw new ArgumentNullException("copyFrom");
-            _FunctionProvider = copyFrom.FunctionProvider;
             _TopLevelParameters = new Parameters.ParameterBase(copyFrom.TopLevelParameters);
             _Parameters.Add(DecodeExpressionType.IntegerParameter, new Parameters.ParameterBase(copyFrom._Parameters[DecodeExpressionType.IntegerParameter]));
             _Parameters.Add(DecodeExpressionType.PlayerParameter, new Parameters.PlayerParameters(copyFrom._Parameters[DecodeExpressionType.PlayerParameter]));

@@ -155,8 +155,8 @@ namespace SaintCoinach.Text {
 
         #region IExpressionNode Members
 
-        public IExpression Evaluate(EvaluationParameters parameters) {
-            return new Expressions.ExpressionCollection(Children.Select(c => c.TryEvaluate(parameters)));
+        public IExpression Evaluate(IEvaluationFunctionProvider provider, EvaluationParameters parameters) {
+            return new Expressions.ExpressionCollection(Children.Select(c => c.TryEvaluate(provider, parameters)));
         }
 
         #endregion

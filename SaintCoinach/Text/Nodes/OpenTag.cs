@@ -35,8 +35,8 @@ namespace SaintCoinach.Text.Nodes {
 
         #region IExpressionNode Members
 
-        public IExpression Evaluate(EvaluationParameters parameters) {
-            return new Expressions.OpenTag(Tag, Arguments.Select(_ => _.TryEvaluate(parameters)));
+        public IExpression Evaluate(IEvaluationFunctionProvider provider, EvaluationParameters parameters) {
+            return new Expressions.OpenTag(Tag, Arguments.Select(_ => _.TryEvaluate(provider, parameters)));
         }
 
         #endregion

@@ -40,8 +40,8 @@ namespace SaintCoinach.Text.Nodes {
 
         #region IExpressionNode Members
 
-        public IExpression Evaluate(EvaluationParameters parameters) {
-            return new Expressions.GenericExpression(parameters.FunctionProvider.Compare(parameters, ComparisonType, Left, Right));
+        public IExpression Evaluate(IEvaluationFunctionProvider provider, EvaluationParameters parameters) {
+            return new Expressions.GenericExpression(provider.Compare(parameters, ComparisonType, Left, Right));
         }
 
         #endregion
