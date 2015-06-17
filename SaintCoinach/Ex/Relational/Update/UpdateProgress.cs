@@ -13,7 +13,7 @@ namespace SaintCoinach.Ex.Relational.Update {
 
         #endregion
 
-        public UpdateProgress(UpdateProgress copyFrom) {
+        public UpdateProgress(UpdateProgress copyFrom) : this() {
             CurrentStep = copyFrom.CurrentStep;
             TotalSteps = copyFrom.TotalSteps;
             CurrentFiles = new List<string>(copyFrom.CurrentFiles);
