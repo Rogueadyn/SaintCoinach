@@ -21,6 +21,11 @@ namespace SaintCoinach.Ex.Relational.Update {
 
         #endregion
 
+        #region Properties
+        public SheetDefinition PreviousDefinition { get { return _PreviousDefinition; } }
+        public SheetDefinition UpdatedDefinition { get { return _UpdatedDefinition; } }
+        #endregion
+
         #region Constructors
 
         #region Constructor

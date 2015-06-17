@@ -16,6 +16,21 @@ namespace SaintCoinach.Text.Nodes {
             _Value = value;
         }
 
+        public bool Equals(INode other) {
+            var n = other as StaticInteger;
+            if (n == null)
+                return false;
+
+            return _Value == n._Value;
+        }
+        public int CompareTo(INode other) {
+            var n = other as StaticInteger;
+            if (n == null)
+                return 1;
+
+            return _Value.CompareTo(n._Value);
+        }
+
         public override string ToString() {
             return Value.ToString();
         }

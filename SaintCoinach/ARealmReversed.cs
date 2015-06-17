@@ -432,7 +432,7 @@ namespace SaintCoinach {
         /// <param name="progress">Optional object to which update progress is reported.</param>
         /// <returns>Returns the <see cref="UpdateReport" /> containing all changes.</returns>
         /// <exception cref="InvalidOperationException">Definition is up-to-date.</exception>
-        public UpdateReport Update(bool detectDataChanges, IProgress<UpdateProgress> progress = null) {
+        public UpdateReport Update(bool detectDataChanges, IProgress<UpdateProgress> progress = null, int threadCount = -1) {
             if (DefinitionVersion == GameVersion)
                 throw new InvalidOperationException();
 
@@ -454,7 +454,7 @@ namespace SaintCoinach {
 
                     var updater = new RelationUpdater(previousPack, previousDefinition, Packs, GameVersion, progress);
 
-                    var changes = updater.Update(detectDataChanges);
+                    var changes = updater.Update(detectDataChanges, threadCount);
                     report = new UpdateReport(previousVersion, GameVersion, changes);
 
                     var definition = updater.Updated;

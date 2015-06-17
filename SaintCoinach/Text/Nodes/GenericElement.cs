@@ -31,6 +31,50 @@ namespace SaintCoinach.Text.Nodes {
             _Content = content;
         }
 
+        public bool Equals(INode other) {
+            var n = other as GenericElement;
+            if (n == null)
+                return false;
+            if (_Tag != n._Tag)
+                return false;
+            if (!_Arguments.Equals(n._Arguments))
+                return false;
+
+            var lNull = object.ReferenceEquals(_Content, null);
+            var rNull = object.ReferenceEquals(n._Content, null);
+            if (lNull != rNull)
+                return false;
+            if (lNull)
+                return true;
+            return _Content.Equals(n._Content);
+        }
+        public int CompareTo(INode other) {
+            var n = other as GenericElement;
+            if (n == null)
+                return 1;
+            if (_Tag != n._Tag)
+                return ((byte)_Tag).CompareTo((byte)n._Tag);
+
+            var argsCmp = _Arguments.CompareTo(n._Arguments);
+            if (argsCmp != 0)
+                return argsCmp;
+
+            {
+                var lNull = object.ReferenceEquals(_Content, null);
+                var rNull = object.ReferenceEquals(n._Content, null);
+                if (lNull != rNull)
+                    return lNull.CompareTo(rNull);
+                if (lNull)
+                    return 0;
+
+                var cntCmp = _Content.CompareTo(n._Content);
+                if (cntCmp != 0)
+                    return cntCmp;
+            }
+
+            return 0;
+        }
+
         public override string ToString() {
             var sb = new StringBuilder();
             ToString(sb);

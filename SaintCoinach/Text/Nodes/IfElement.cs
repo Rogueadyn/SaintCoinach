@@ -20,10 +20,71 @@ namespace SaintCoinach.Text.Nodes {
         public IfElement(TagType tag, INode condition, INode trueValue, INode falseValue) {
             if (condition == null)
                 throw new ArgumentNullException("condition");
+            if (trueValue == null)
+                throw new ArgumentNullException("trueValue");
             _Tag = tag;
             _Condition = condition;
             _TrueValue = trueValue;
             _FalseValue = falseValue;
+        }
+
+        public bool Equals(INode other) {
+            var n = other as IfElement;
+            if (n == null)
+                return false;
+            if (_Tag != n._Tag)
+                return false;
+
+            if (!_Condition.Equals(n._Condition))
+                return false;
+
+            if (!_TrueValue.Equals(n._TrueValue))
+                return false;
+
+            {
+                var lNull = object.ReferenceEquals(_FalseValue, null);
+                var rNull = object.ReferenceEquals(n._FalseValue, null);
+
+                if (lNull != rNull)
+                    return false;
+
+                if (!lNull && !_FalseValue.Equals(n._FalseValue))
+                    return false;
+            }
+
+            return true;
+        }
+        public int CompareTo(INode other) {
+            var n = other as IfElement;
+            if (n == null)
+                return 1;
+
+            if (_Tag != n._Tag)
+                return ((byte)_Tag).CompareTo((byte)n._Tag);
+
+            var cndCmp = _Condition.CompareTo(n._Condition);
+            if (cndCmp != 0)
+                return cndCmp;
+
+            var trueCmp = _TrueValue.CompareTo(n._TrueValue);
+            if (trueCmp != 0)
+                return trueCmp;
+
+
+            {
+                var lNull = object.ReferenceEquals(_FalseValue, null);
+                var rNull = object.ReferenceEquals(n._FalseValue, null);
+
+                if (lNull != rNull)
+                    return lNull.CompareTo(rNull);
+                if(!lNull) {
+                    var cmp = _FalseValue.CompareTo(n._FalseValue);
+                    if (cmp != 0)
+                        return cmp;
+                }
+            }
+
+            return 0;
         }
 
         public override string ToString() {

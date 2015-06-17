@@ -63,13 +63,44 @@ namespace SaintCoinach.Text {
         public override int GetHashCode() {
             return ToString().GetHashCode();
         }
-        public override bool Equals(object obj) {
-            if (obj is XivString)
-                return string.Equals(this.ToString(), obj.ToString());
-            if (obj is string)
-                return string.Equals(this.ToString(), (string)obj);
+
+        #region Equality
+        public static bool Equals(XivString left, XivString right) {
+            var lNull = object.ReferenceEquals(null, left);
+            var rNull = object.ReferenceEquals(null, right);
+            if (lNull != rNull)
+                return false;
+            if (lNull == true)
+                return true;
+
+            if (left._Children.Length != right._Children.Length)
+                return false;
+
+            for (var i = 0; i < left.ChildrenCount; ++i) {
+                var lc = left._Children[i];
+                var rc = right._Children[i];
+                if (!lc.Equals(rc))
+                    return false;
+            }
+            return true;
+        }
+
+        bool IEquatable<INode>.Equals(INode other) {
+            if (other is XivString)
+                return Equals(this, (XivString)other);
             return false;
         }
+
+        public override bool Equals(object obj) {
+            if (obj is XivString)
+                return Equals(this, (XivString)obj);
+            if (obj is string)
+                return Equals(this.ToString(), (string)obj);
+            return false;
+        }
+
+        #region Operators
+
         public static bool operator ==(XivString left, XivString right) {
             var lNull = object.ReferenceEquals(null, left);
             var rNull = object.ReferenceEquals(null, right);
@@ -77,7 +108,7 @@ namespace SaintCoinach.Text {
                 return true;
             if (lNull != rNull)
                 return false;
-            return (left.ToString() == right.ToString());
+            return (Equals(left, right));
         }
         public static bool operator !=(XivString left, XivString right) {
             var lNull = object.ReferenceEquals(null, left);
@@ -86,7 +117,7 @@ namespace SaintCoinach.Text {
                 return false;
             if (lNull != rNull)
                 return true;
-            return (left.ToString() != right.ToString());
+            return !(Equals(left, right));
         }
         public static bool operator ==(XivString left, string right) {
             var lNull = object.ReferenceEquals(null, left);
@@ -106,6 +137,55 @@ namespace SaintCoinach.Text {
                 return true;
             return (left.ToString() != right);
         }
+        #endregion
+
+        #region IEquatable<XivString> Members
+
+        public bool Equals(XivString other) {
+            return Equals(this, other);
+        }
+
+        #endregion
+
+        #region IEquatable<string> Members
+
+        public bool Equals(string other) {
+            return string.Equals(this.ToString(), other);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Comparison
+
+        public static int Compare(XivString left, XivString right) {
+            var lNull = object.ReferenceEquals(null, left);
+            var rNull = object.ReferenceEquals(null, right);
+            if (lNull != rNull)
+                return lNull.CompareTo(rNull);
+            if (!lNull)
+                return 0;
+
+            if (left._Children.Length != right._Children.Length)
+                return left._Children.Length.CompareTo(right._Children.Length);
+
+            for (var i = 0; i < left.ChildrenCount; ++i) {
+                var lc = left._Children[i];
+                var rc = right._Children[i];
+
+                var cmp = lc.CompareTo(rc);
+                if (cmp != 0)
+                    return cmp;
+            }
+            return 0;
+        }
+
+        int IComparable<INode>.CompareTo(INode other) {
+            if (other is XivString)
+                return Compare(this, (XivString)other);
+            return 1;
+        }
 
         #region IComparable Members
 
@@ -124,7 +204,7 @@ namespace SaintCoinach.Text {
         #region IComparable<XivString> Members
 
         public int CompareTo(XivString other) {
-            return string.Compare(this.ToString(), other.ToString());
+            return Compare(this, other);
         }
 
         #endregion
@@ -136,20 +216,6 @@ namespace SaintCoinach.Text {
         }
 
         #endregion
-
-        #region IEquatable<XivString> Members
-
-        public bool Equals(XivString other) {
-            return string.Equals(this.ToString(), other.ToString());
-        }
-
-        #endregion
-
-        #region IEquatable<string> Members
-
-        public bool Equals(string other) {
-            return string.Equals(this.ToString(), other);
-        }
 
         #endregion
 

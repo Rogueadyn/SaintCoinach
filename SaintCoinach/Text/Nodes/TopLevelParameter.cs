@@ -24,6 +24,20 @@ namespace SaintCoinach.Text.Nodes {
 
         #region INode Members
 
+        public bool Equals(INode other) {
+            var n = other as TopLevelParameter;
+            if (n == null)
+                return false;
+
+            return (_Value == n._Value);
+        }
+        public int CompareTo(INode other) {
+            var n = other as TopLevelParameter;
+            if (n == null)
+                return 1;
+
+            return _Value.CompareTo(n._Value);
+        }
 
         TagType INode.Tag { get { return TagType.None; } }
         NodeFlags INode.Flags { get { return NodeFlags.IsExpression; } }

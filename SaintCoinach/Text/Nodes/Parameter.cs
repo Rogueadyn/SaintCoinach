@@ -21,6 +21,24 @@ namespace SaintCoinach.Text.Nodes {
             _ParameterIndex = parameterIndex;
         }
 
+        public bool Equals(INode other) {
+            var n = other as Parameter;
+            if (n == null)
+                return false;
+
+            return (_ParameterIndex.Equals(n._ParameterIndex) && _ParameterType == n._ParameterType);
+        }
+        public int CompareTo(INode other) {
+            var n = other as Parameter;
+            if (n == null)
+                return 1;
+
+            if (_ParameterType != n._ParameterType)
+                return ((byte)_ParameterType).CompareTo((byte)n._ParameterType);
+
+            return _ParameterIndex.CompareTo(n._ParameterIndex);
+        }
+
         public override string ToString() {
             var sb = new StringBuilder();
             ToString(sb);

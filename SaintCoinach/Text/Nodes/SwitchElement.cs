@@ -26,6 +26,66 @@ namespace SaintCoinach.Text.Nodes {
             _Cases = new ReadOnlyDictionary<int, INode>(cases);
         }
 
+        public bool Equals(INode other) {
+            var n = other as SwitchElement;
+            if (n == null)
+                return false;
+
+            if (_Tag != n._Tag)
+                return false;
+            if (!_CaseSwitch.Equals(n._CaseSwitch))
+                return false;
+
+            if (_Cases.Count != n._Cases.Count)
+                return false;
+
+            var otherQueue = n._Cases.Values.ToList();
+            foreach(var kvp in _Cases) {
+                INode otherCase;
+                if (!n._Cases.TryGetValue(kvp.Key, out otherCase))
+                    return false;
+
+                if (!kvp.Value.Equals(otherCase))
+                    return false;
+
+                otherQueue.Remove(otherCase);
+            }
+
+            return (otherQueue.Count == 0);
+        }
+        public int CompareTo(INode other) {
+            var n = other as SwitchElement;
+            if (n == null)
+                return 1;
+            
+            if (_Tag != n._Tag)
+                return ((byte)_Tag).CompareTo((byte)n._Tag);
+
+            var switchCmp = _CaseSwitch.CompareTo(n._CaseSwitch);
+            if (switchCmp != 0)
+                return switchCmp;
+
+            if (_Cases.Count != n._Cases.Count)
+                return _Cases.Count.CompareTo(n._Cases.Count);
+
+            var otherQueue = n._Cases.Values.ToList();
+            foreach (var kvp in _Cases) {
+                INode otherCase;
+                if (!n._Cases.TryGetValue(kvp.Key, out otherCase))
+                    return 1;
+
+                var cmp = kvp.Value.CompareTo(otherCase);
+                if (cmp != 0)
+                    return cmp;
+
+                otherQueue.Remove(otherCase);
+            }
+
+            if (otherQueue.Count > 0)
+                return -1;
+            return 0;
+        }
+
         public override string ToString() {
             var sb = new StringBuilder();
             ToString(sb);

@@ -15,6 +15,19 @@ namespace SaintCoinach.Text.Nodes {
             _Tag = tag;
         }
 
+        public bool Equals(INode other) {
+            var n = other as CloseTag;
+            return (n != null && n._Tag == _Tag);
+        }
+        public int CompareTo(INode other) {
+            var n = other as CloseTag;
+            if (n == null)
+                return 1;
+            if (_Tag != n._Tag)
+                return ((byte)_Tag).CompareTo((byte)n._Tag);
+            return 0;
+        }
+
         public override string ToString() {
             var sb = new StringBuilder();
             ToString(sb);

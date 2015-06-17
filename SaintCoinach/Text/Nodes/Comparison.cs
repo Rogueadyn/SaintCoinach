@@ -17,9 +17,37 @@ namespace SaintCoinach.Text.Nodes {
         public INode Right { get { return _Right; } }
 
         public Comparison(DecodeExpressionType comparisonType, INode left, INode right) {
+            if (left == null)
+                throw new ArgumentNullException("left");
+            if (right == null)
+                throw new ArgumentNullException("right");
             _ComparisonType = comparisonType;
             _Left = left;
             _Right = right;
+        }
+
+        public bool Equals(INode other) {
+            var n = other as Comparison;
+            if (n == null)
+                return false;
+            if (n._ComparisonType != _ComparisonType)
+                return false;
+            return (_Left.Equals(n._Left) && _Right.Equals(n._Right));
+        }
+        public int CompareTo(INode other) {
+            var n = other as Comparison;
+            if (n == null)
+                return 1;
+            if(_ComparisonType != n._ComparisonType)
+                return ((byte)_ComparisonType).CompareTo((byte)n._ComparisonType);
+
+            var leftCmp = _Left.CompareTo(n._Left);
+            if (leftCmp != 0)
+                return leftCmp;
+            var rightCmp = _Right.CompareTo(n._Right);
+            if (rightCmp != 0)
+                return rightCmp;
+            return 0;
         }
 
         public override string ToString() {

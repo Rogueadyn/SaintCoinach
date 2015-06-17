@@ -14,8 +14,25 @@ namespace SaintCoinach.Text.Nodes {
         NodeFlags INode.Flags { get { return NodeFlags.IsStatic; } }
 
         public DefaultElement(TagType tag, byte[] innerBuffer) {
+            if (innerBuffer == null)
+                throw new ArgumentNullException("innerBuffer");
             _Tag = tag;
             _Data = new StaticByteArray(innerBuffer);
+        }
+
+        public bool Equals(INode other) {
+            var n = other as DefaultElement;
+            if (n == null || n._Tag != _Tag)
+                return false;
+            return (n != null && n._Tag == _Tag && n._Data.Equals(_Data));
+        }
+        public int CompareTo(INode other) {
+            var n = other as DefaultElement;
+            if (n == null)
+                return 1;
+            if (_Tag != n._Tag)
+                return ((byte)_Tag).CompareTo((byte)n._Tag);
+            return _Data.CompareTo(n._Data);
         }
 
         public override string ToString() {

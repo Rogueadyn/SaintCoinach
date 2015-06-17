@@ -35,6 +35,37 @@ namespace SaintCoinach.Text.Nodes {
             }
         }
 
+        public bool Equals(ArgumentCollection other) {
+            if (other == null)
+                return false;
+            if (other._Items.Length != _Items.Length)
+                return false;
+            for(var i = 0; i < _Items.Length; ++i) {
+                var l = _Items[i];
+                var r = other._Items[i];
+                if (!l.Equals(r))
+                    return false;
+            }
+            return true;
+        }
+        public int CompareTo(ArgumentCollection other) {
+            if (other == null)
+                return 1;
+            if (_Items.Length > other._Items.Length)
+                return -1;
+            if (_Items.Length < other._Items.Length)
+                return 1;
+
+            for(var i = 0; i < _Items.Length; ++i) {
+                var l = _Items[i];
+                var r = other._Items[i];
+                var cmp = l.CompareTo(r);
+                if (cmp != 0)
+                    return cmp;
+            }
+            return 0;
+        }
+
         #region IEnumerable<IXivStringPart> Members
 
         public IEnumerator<INode> GetEnumerator() {
