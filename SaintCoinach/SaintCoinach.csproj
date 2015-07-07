@@ -82,6 +82,8 @@
     <Compile Include="Ex\MultiSheet.Enumerator.cs" />
     <Compile Include="Ex\PartialDataSheet.Enumerator.cs" />
     <Compile Include="Ex\Relational\Update\UpdateProgress.cs" />
+    <Compile Include="Ex\Relational\ValueConverters\GenericReferenceConverter.cs" />
+    <Compile Include="Ex\Relational\ValueConverters\MultiReferenceConverter.cs" />
     <Compile Include="Graphics\Bone.cs" />
     <Compile Include="ByteArrayExtensions.cs" />
     <Compile Include="Graphics\BoundingBox.cs" />
@@ -535,6 +537,7 @@
     <Compile Include="Xiv\CompanyCraftDraftCategoryTxt.cs" />
     <Compile Include="Xiv\CompanyCraftManufactoryState.cs" />
     <Compile Include="Xiv\CompanyCraftType.cs" />
+    <Compile Include="Xiv\CustomTalk.cs" />
     <Compile Include="Xiv\EObj.cs" />
     <Compile Include="Xiv\FccShop.cs" />
     <Compile Include="Xiv\GatheringCondition.cs" />
@@ -543,6 +546,7 @@
     <Compile Include="Xiv\GatheringNotebookRegion.cs" />
     <Compile Include="Xiv\GatheringPoint.cs" />
     <Compile Include="Xiv\GatheringPointBase.cs" />
+    <Compile Include="Xiv\GatheringPointBonus.cs" />
     <Compile Include="Xiv\GatheringPointBonusType.cs" />
     <Compile Include="Xiv\GatheringPointName.cs" />
     <Compile Include="Xiv\GeneralAction.cs" />
@@ -552,6 +556,7 @@
     <Compile Include="Xiv\IQuantifiableXivString.cs" />
     <Compile Include="Xiv\ItemComparer.cs" />
     <Compile Include="Xiv\LeveVfx.cs" />
+    <Compile Include="Xiv\MasterpieceSupplyDuty.cs" />
     <Compile Include="Xiv\ParamGrow.cs" />
     <Compile Include="Xiv\QuestRepeatInterval.cs" />
     <Compile Include="Range.cs" />
@@ -812,6 +817,7 @@
     <Compile Include="Xiv\QuestRequirements.ClassJobRequirement.cs" />
     <Compile Include="Xiv\PrerequisiteQuestsRequirementType.cs" />
     <Compile Include="Xiv\QuestRequirements.PreviousQuestRequirement.cs" />
+    <Compile Include="Xiv\MasterpieceSupplyDuty.CollectableItem.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -37,6 +37,10 @@ namespace SaintCoinach.Ex.Relational.Serialization {
 
         private readonly Dictionary<Type, string> _Tags = new Dictionary<Type, string> {
             {
+                typeof(MultiReferenceConverter), "multiref_conv"
+            }, {
+                typeof(GenericReferenceConverter), "ref_conv"
+            }, {
                 typeof(ColorConverter), "color_conv"
             }, {
                 typeof(IconConverter), "icon_conv"
